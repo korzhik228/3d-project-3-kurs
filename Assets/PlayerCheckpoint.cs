@@ -1,33 +1,61 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCheckpoint : MonoBehaviour
 {
+    public Transform currentCheckpoint;
 
-    public GameObject flag;
-    Vector3 spawnPoint;
+    public float respawnHeight = -20f;
+    public float respawnForce = 5f;
 
-    // Start is called before the first frame update
+    private Rigidbody playerRigidbody;
+    private Vector3 initialSpawnPoint;
+
     void Start()
     {
-        spawnPoint = gameObject.transform.position;
+
+        playerRigidbody = GetComponent<Rigidbody>();
+
+
+        initialSpawnPoint = transform.position;
+        currentCheckpoint = null;
     }
 
-    // Update is called once per frame
     void Update()
     {
-       if(gameObject.transform.position.y < -20f)
-       {
-            gameObject.transform.position = spawnPoint;
-       }
+
+        if (transform.position.y < respawnHeight)
+        {
+            RespawnAtCheckpoint();
+        }
     }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("CheckPoint"))
+        if (other.CompareTag("CheckPoint"))
         {
-            spawnPoint = flag.transform.position;
-            Destroy(flag);
+            currentCheckpoint = other.transform;
+            Debug.Log("Checkpoint reached!");
         }
+
+        if (other.CompareTag("DeathZone"))
+        {
+            RespawnAtCheckpoint();
+        }
+    }
+
+    private void RespawnAtCheckpoint()
+    {
+        Vector3 spawnPosition = currentCheckpoint != null
+            ? currentCheckpoint.position
+            : initialSpawnPoint;
+
+        transform.position = spawnPosition;
+
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.velocity = Vector3.zero;
+        }
+
+        Debug.Log("Respawned at checkpoint!");
     }
 }

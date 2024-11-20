@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -8,31 +6,58 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private Animator _animator;
+    [SerializeField] private float _rotationSpeed = 10f; 
+
     private bool _onGround;
     private bool _doubleJumpAvailable = true;
+    private Camera mainCamera;
+
+    void Start()
+    {
+        mainCamera = Camera.main;
+    }
 
     void Update()
     {
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
         if (_onGround)
         {
             if (Input.GetKey(KeyCode.D))
             {
-                _rigidbody.AddForce(Vector3.right * _speed);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    Quaternion.LookRotation(cameraRight),
+                    _rotationSpeed * Time.deltaTime
+                );
                 _animator.SetTrigger("triggerMove2");
             }
+
             if (Input.GetKey(KeyCode.A))
             {
-                _rigidbody.AddForce(Vector3.left * _speed);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    Quaternion.LookRotation(-cameraRight),
+                    _rotationSpeed * Time.deltaTime
+                );
                 _animator.SetTrigger("triggerMove2");
             }
-            if (Input.GetKey(KeyCode.S))
-            {
-                _rigidbody.AddForce(Vector3.back * _speed);
-                _animator.SetTrigger("triggerMove");
-            }
+
             if (Input.GetKey(KeyCode.W))
             {
-                _rigidbody.AddForce(Vector3.forward * _speed);
+                _rigidbody.AddForce(cameraForward * _speed);
+                _animator.SetTrigger("triggerMove");
+            }
+
+            if (Input.GetKey(KeyCode.S))
+            {
+                _rigidbody.AddForce(-cameraForward * _speed);
                 _animator.SetTrigger("triggerMove");
             }
         }

@@ -9,6 +9,8 @@ TagManager:
   - Button
   - Coin
   - CheckPoint
+  - Box
+  - DeathZone
   layers:
   - Default
   - TransparentFX

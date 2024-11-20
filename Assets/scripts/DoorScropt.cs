@@ -2,37 +2,34 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-    public float openSpeed = 2f; // Скорость открытия двери
-    public Vector3 openPosition; // Конечная позиция открытой двери
-    public bool isOpen = false; // Флаг, открыта ли дверь
+    public float openSpeed = 2f; 
+    public Vector3 openPosition; 
+    public bool isOpen = false; 
 
-    private Vector3 closedPosition; // Исходная позиция двери
+    private Vector3 closedPosition; 
 
     private void Start()
     {
-        closedPosition = transform.position; // Сохраняем исходную позицию двери
+        closedPosition = transform.position; 
     }
 
     public void Open()
     {
-        if (!isOpen) // Проверяем, не открыта ли уже дверь
+        if (!isOpen) 
         {
             isOpen = true;
-            // Вычисляем конечную позицию двери
-            openPosition = closedPosition + Vector3.up * 2f; // Например, открытие на 2 метра вверх
+            openPosition = closedPosition + Vector3.up * 2f; 
         }
     }
 
     private void Update()
     {
-        if (isOpen) // Если дверь должна быть открыта
+        if (isOpen) 
         {
-            // Плавно перемещаем дверь к конечной позиции
             transform.position = Vector3.Lerp(transform.position, openPosition, openSpeed * Time.deltaTime);
         }
         else
         {
-            // Возвращаем дверь к исходной позиции, если она закрыта
             transform.position = Vector3.Lerp(transform.position, closedPosition, openSpeed * Time.deltaTime);
         }
     }
